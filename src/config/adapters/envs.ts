@@ -9,4 +9,7 @@ export const envs = {
   MONGO_DB_NAME: env.get('MONGO_DB_NAME').required().asString(),
   MONGO_USER: env.get('MONGO_USER').required().asString(),
   MONGO_PASS: env.get('MONGO_PASS').required().asString(),
+  GOOGLE_CLIENT_ID: env.get('GOOGLE_CLIENT_ID').required().asString(),
+  GOOGLE_CLIENT_SECRET: env.get('GOOGLE_CLIENT_SECRET').required().asString(),
+  GOOGLE_REDIRECT_URI: env.get('GOOGLE_REDIRECT_URI').required().asString(),
 }
