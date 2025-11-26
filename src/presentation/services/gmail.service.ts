@@ -62,7 +62,11 @@ export class GmailService {
       })
 
       const emails = await Promise.all(emailPromises)
-      return emails.filter((email) => email !== null)
+      return emails.filter(
+        (email) =>
+          email !== null &&
+          email.subject === 'Netflix: Tu código de inicio de sesión'
+      )
     } catch (error) {
       console.error('Error in getLatestEmails:', error)
       throw CustomError.internalServerError('Failed to fetch emails from Gmail')
@@ -119,14 +123,14 @@ export class GmailService {
       from: this.cleanFromField(from),
       date,
       service,
-      codes,
-      body:
-        this.cleanEmailContent(bodyContent.substring(0, 500)) +
-        (bodyContent.length > 500 ? '...' : ''), // Primeros 500 caracteres LIMPIOS
-      fullBody: this.cleanEmailContent(bodyContent), // Contenido completo LIMPIO
+      code: codes[0] || null, // Solo el primer código encontrado
+      // body:
+      //   this.cleanEmailContent(bodyContent.substring(0, 500)) +
+      //   (bodyContent.length > 500 ? '...' : ''), // Primeros 500 caracteres LIMPIOS
+      // fullBody: this.cleanEmailContent(bodyContent), // Contenido completo LIMPIO
       snippet: this.cleanEmailContent(emailData.snippet || ''),
-      labelIds: emailData.labelIds,
-      internalDate: emailData.internalDate,
+      // labelIds: emailData.labelIds,
+      // internalDate: emailData.internalDate,
     }
   }
 
