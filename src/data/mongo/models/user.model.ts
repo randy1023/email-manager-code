@@ -1,3 +1,4 @@
+import { create } from 'domain'
 import mongoose from 'mongoose'
 const { Schema } = mongoose
 
@@ -20,6 +21,24 @@ const userSchema = new Schema({
     enum: ['USER_ROLE', 'ADMIN_ROLE'],
     default: ['USER_ROLE'],
   },
+  assignedEmails: {
+    type: [String],
+    default: [],
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 })
+
+userSchema.index({ assignedEmails: 1 })
 
 export const UserModel = mongoose.model('User', userSchema)

@@ -37,8 +37,7 @@ export class GmailService {
       const response = await gmail.users.messages.list({
         userId: 'me',
         maxResults: limit,
-
-        q: 'in:inbox',
+        q: 'to:bryanppg@gmail.com -category:promotions -category:forums -category:social -category:notifications category:primary',
       })
 
       const messages = response.data.messages || []
@@ -62,10 +61,9 @@ export class GmailService {
       })
 
       const emails = await Promise.all(emailPromises)
+
       return emails.filter(
-        (email) =>
-          email !== null &&
-          email.subject === 'Netflix: Tu código de inicio de sesión'
+        (email) => email !== null && email.service !== 'Otro'
       )
     } catch (error) {
       console.error('Error in getLatestEmails:', error)
@@ -96,12 +94,17 @@ export class GmailService {
   // Procesar el payload completo del email - MEJORADO
   private processEmailPayload(emailData: any) {
     const headers = emailData.payload?.headers || []
+
     const subject = this.cleanHeader(
       headers.find((header: any) => header.name === 'Subject')?.value ||
         'Sin asunto'
     )
     const from = this.cleanHeader(
       headers.find((header: any) => header.name === 'From')?.value ||
+        'Desconocido'
+    )
+    const to = this.cleanHeader(
+      headers.find((header: any) => header.name === 'To')?.value ||
         'Desconocido'
     )
     const date =
@@ -121,6 +124,7 @@ export class GmailService {
       threadId: emailData.threadId,
       subject,
       from: this.cleanFromField(from),
+      to,
       date,
       service,
       code: codes[0] || null, // Solo el primer código encontrado
