@@ -40,6 +40,7 @@ export class AuthMiddleware {
       // TODO: validar si el usuario esta activo
       const userEntity = UserEntity.fromObject(user)
       req.body.user = userEntity.values
+
       next()
     } catch (error) {
       console.log(error)

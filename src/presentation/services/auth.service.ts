@@ -70,4 +70,21 @@ export class AuthService {
       throw CustomError.internalServerError(`${error}`)
     }
   }
+
+  public async checkStatus(user: UserEntity) {
+    const payload = {
+      id: user.id,
+    }
+
+    try {
+      const token = await JwtAdapter.generateToken(payload)
+
+      return {
+        user,
+        token,
+      }
+    } catch (error) {
+      throw CustomError.internalServerError(`${error}`)
+    }
+  }
 }
