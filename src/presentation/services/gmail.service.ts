@@ -1,7 +1,8 @@
 import { google, Auth } from 'googleapis'
-import { CustomError } from '../../domain'
+import { CustomError, GetEmailsDto } from '../../domain'
 import { join } from 'path'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
+import { UserModel } from '../../data'
 export class GmailService {
   private oauth2Client: Auth.OAuth2Client
   private tokenPath: string
@@ -29,17 +30,22 @@ export class GmailService {
   }
 
   // Obtener últimos emails (MÉTODO PRINCIPAL)
-  async getLatestEmails(limit: number = 10) {
+  async getLatestEmails(getEmailsDto: GetEmailsDto) {
+    const isAssignedEmail = await UserModel.findOne({
+      assignedEmails: getEmailsDto.email,
+    })
+    if (!isAssignedEmail)
+      throw CustomError.badRequest('Email was not assigned to you')
     try {
       const gmail = google.gmail({ version: 'v1', auth: this.oauth2Client })
 
       // Obtener lista de mensajes
       const response = await gmail.users.messages.list({
         userId: 'me',
-        maxResults: limit,
-        q: 'to:bryanppg@gmail.com -category:promotions -category:forums -category:social -category:notifications category:primary',
+        maxResults: getEmailsDto.limit,
+        q: `to:${getEmailsDto.email} -category:promotions -category:forums -category:social -category:notifications category:primary`,
       })
-
+      //bryanppg@gmail.com
       const messages = response.data.messages || []
 
       console.log(`Found ${messages.length} messages`)
@@ -209,13 +215,13 @@ export class GmailService {
       { pattern: /epic games/i, service: 'Epic Games' },
       { pattern: /xbox|microsoft/i, service: 'Xbox' },
       { pattern: /playstation|sony/i, service: 'PlayStation' },
-      { pattern: /google|gmail/i, service: 'Google' },
-      { pattern: /facebook|meta/i, service: 'Facebook' },
-      { pattern: /instagram/i, service: 'Instagram' },
-      { pattern: /twitter|x\.com/i, service: 'Twitter' },
-      { pattern: /whatsapp/i, service: 'WhatsApp' },
-      { pattern: /telegram/i, service: 'Telegram' },
-      { pattern: /discord/i, service: 'Discord' },
+      // { pattern: /google|gmail/i, service: 'Google' },
+      // { pattern: /facebook|meta/i, service: 'Facebook' },
+      // { pattern: /instagram/i, service: 'Instagram' },
+      // { pattern: /twitter|x\.com/i, service: 'Twitter' },
+      // { pattern: /whatsapp/i, service: 'WhatsApp' },
+      // { pattern: /telegram/i, service: 'Telegram' },
+      // { pattern: /discord/i, service: 'Discord' },
     ]
 
     const searchText = `${from} ${subject} ${body}`
@@ -346,9 +352,9 @@ export class GmailService {
 
       // Patrones específicos de servicios
       /(netflix pin|perfil pin|pin del perfil)[\s:]*(\d{4})/gi,
-      /(twitter code|código twitter|código de twitter)[\s:]*(\d{6})/gi,
-      /(google verification|verificación de google)[\s:]*(\d{6})/gi,
-      /(facebook code|código facebook)[\s:]*(\d{5})/gi,
+      // /(twitter code|código twitter|código de twitter)[\s:]*(\d{6})/gi,
+      // /(google verification|verificación de google)[\s:]*(\d{6})/gi,
+      // /(facebook code|código facebook)[\s:]*(\d{5})/gi,
     ]
 
     for (const pattern of patterns) {

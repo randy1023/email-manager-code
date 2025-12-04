@@ -12,7 +12,7 @@ export class AuthRoutes {
     // Definir las rutas
     router.post('/login', authController.loginUser)
     router.post('/register', authController.registerUser)
-    router.post(
+    router.get(
       '/check-status',
       [AuthMiddleware.validateJWT],
       authController.checkStatus

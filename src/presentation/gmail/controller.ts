@@ -15,13 +15,13 @@ export class GmailController {
   }
 
   public getEmails = (req: Request, res: Response) => {
-    const [error, getEmailsDto] = GetEmailsDto.create(req.query)
+    const [error, getEmailsDto] = GetEmailsDto.create(req.body)
     if (error) {
       res.status(400).json({ error })
       return
     }
     this.gmailService
-      .getLatestEmails(getEmailsDto!.limit)
+      .getLatestEmails(getEmailsDto!)
       .then((emails) => res.json(emails))
       .catch((error) => this.handleError(error, res))
   }
