@@ -11,6 +11,7 @@ export class UsersController {
       res.status(error.statusCode).json({ error: error.message })
       return
     }
+
     res.status(500).json({ error: 'Internal server error' })
   }
 

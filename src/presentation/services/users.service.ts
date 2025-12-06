@@ -10,8 +10,17 @@ export class UsersService {
     return users.map((user) => UserEntity.fromObject(user))
   }
   public async getUserById(userId: string): Promise<UserEntity> {
-    const user = await UserModel.findById(userId)
-    if (!user) throw CustomError.badRequest(`User with id ${userId} no found`)
-    return UserEntity.fromObject(user)
+    const id = userId
+    try {
+      const user = await UserModel.findById(id)
+
+      return UserEntity.fromObject(user!)
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === 'CastError')
+          throw CustomError.badRequest(`User with id ${userId} no found`)
+      }
+      throw error
+    }
   }
 }
