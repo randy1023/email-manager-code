@@ -4,6 +4,7 @@ import { AuthService, GmailService } from '../services'
 import { envs } from '../../config'
 import { GmailController } from './controller'
 import { join } from 'path'
+import { AuthMiddleware } from '../middlewares/auth.middleware'
 
 export class GmailRoutes {
   static get routes(): Router {
@@ -19,7 +20,7 @@ export class GmailRoutes {
 
     // Definir las rutas
 
-    router.get('/', gmailController.getEmails)
+    router.post('/', [AuthMiddleware.validateJWT], gmailController.getEmails)
 
     return router
   }
