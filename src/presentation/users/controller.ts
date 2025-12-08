@@ -1,5 +1,10 @@
 import { Request, Response } from 'express'
-import { CustomError, LoginUserDto, RegisterUserDto } from '../../domain'
+import {
+  CustomError,
+  LoginUserDto,
+  RegisterUserDto,
+  UpdateUserDto,
+} from '../../domain'
 import { UsersService } from '../services'
 
 export class UsersController {
@@ -30,6 +35,23 @@ export class UsersController {
     }
     this.usersService
       .getUserById(userId)
+      .then((user) => res.json(user))
+      .catch((error) => this.handleError(error, res))
+  }
+  public updateUserByEmail = (req: Request, res: Response) => {
+    const email = req.params.email
+
+    const [error, updaterUserDto] = UpdateUserDto.create({
+      email,
+      ...req.body,
+    })
+    if (error) {
+      res.status(400).json({ error })
+      return
+    }
+
+    this.usersService
+      .updateUserByEmail(updaterUserDto!)
       .then((user) => res.json(user))
       .catch((error) => this.handleError(error, res))
   }

@@ -16,6 +16,11 @@ export class UsersRoutes {
       [AuthMiddleware.validateJWT],
       usersController.getUserById
     )
+    router.patch(
+      '/:email',
+      [AuthMiddleware.validateJWT],
+      usersController.updateUserByEmail
+    )
 
     return router
   }
