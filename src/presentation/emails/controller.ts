@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
 import { CreatedEmailServiceDto, CustomError } from '../../domain'
+import { EmailsService } from '../services'
 
 export class EmailController {
   //* DI
-  constructor() {}
+  constructor(public readonly emailService: EmailsService) {}
 
   private handleError = (error: unknown, res: Response) => {
     if (error instanceof CustomError) {
@@ -21,10 +22,11 @@ export class EmailController {
       res.status(400).json({ error })
       return
     }
+
     console.log({ createdEmailServiceDto })
-    // this.authService
-    //   .registerUser(registerUserDto!)
-    //   .then((user) => res.json(user))
-    //   .catch((error) => this.handleError(error, res))
+    this.emailService
+      .createEmailByService(createdEmailServiceDto!)
+      .then((email) => res.json(email))
+      .catch((error) => this.handleError(error, res))
   }
 }
