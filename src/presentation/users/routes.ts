@@ -10,16 +10,21 @@ export class UsersRoutes {
     const usersController = new UsersController(usersService)
 
     // Definir las rutas
-    router.get('/', [AuthMiddleware.validateJWT], usersController.getUsers)
-    router.get(
-      '/:id',
+    router.delete(
+      '/:email',
       [AuthMiddleware.validateJWT],
-      usersController.getUserById
+      usersController.deletedUserByEmail
     )
     router.patch(
       '/:email',
       [AuthMiddleware.validateJWT],
       usersController.updateUserByEmail
+    )
+    router.get('/', [AuthMiddleware.validateJWT], usersController.getUsers)
+    router.get(
+      '/:id',
+      [AuthMiddleware.validateJWT],
+      usersController.getUserById
     )
 
     return router

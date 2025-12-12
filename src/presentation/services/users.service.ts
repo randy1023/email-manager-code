@@ -49,4 +49,14 @@ export class UsersService {
       throw error
     }
   }
+  public async deleteUserByEmail(email: string) {
+    try {
+      const deletedUser = await UserModel.deleteOne({ email })
+
+      console.log({ deletedUser })
+    } catch (error) {
+      console.log({ error })
+      throw error
+    }
+  }
 }

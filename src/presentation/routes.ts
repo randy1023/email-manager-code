@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { AuthRoutes } from './auth/routes'
 import { GmailRoutes } from './gmail/routes'
 import { UsersRoutes } from './users/routes'
+import { CsvRoutes } from './csv/routes'
 
 export class AppRoutes {
   static get routes(): Router {
@@ -11,6 +12,7 @@ export class AppRoutes {
     router.use('/api/auth', AuthRoutes.routes)
     router.use('/api/gmail', GmailRoutes.routes)
     router.use('/api/users', UsersRoutes.routes)
+    router.use('/api/csv', CsvRoutes.routes)
 
     return router
   }

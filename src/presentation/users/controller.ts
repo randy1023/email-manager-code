@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import {
   CustomError,
+  DeletedUserDto,
   LoginUserDto,
   RegisterUserDto,
   UpdateUserDto,
@@ -52,6 +53,22 @@ export class UsersController {
 
     this.usersService
       .updateUserByEmail(updaterUserDto!)
+      .then((user) => res.json(user))
+      .catch((error) => this.handleError(error, res))
+  }
+  public deletedUserByEmail = (req: Request, res: Response) => {
+    const email = req.params.email
+
+    const [error, deletedUserDto] = DeletedUserDto.create({
+      email,
+    })
+    if (error) {
+      res.status(400).json({ error })
+      return
+    }
+
+    this.usersService
+      .deleteUserByEmail(deletedUserDto?.email!)
       .then((user) => res.json(user))
       .catch((error) => this.handleError(error, res))
   }

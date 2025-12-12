@@ -1,6 +1,7 @@
 import express, { Router } from 'express'
 import path from 'path'
 import cors from 'cors'
+import multer from 'multer'
 
 interface Options {
   port: number
@@ -38,6 +39,29 @@ export class Server {
 
     //* Routes
     this.app.use(this.routes)
+
+    // Middleware para errores de multer
+    this.app.use(
+      (
+        err: any,
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+      ) => {
+        if (err instanceof multer.MulterError) {
+          if (err.code === 'LIMIT_FILE_SIZE') {
+            res.status(400).json({
+              error: 'El tamaño del archivo excede el límite permitido',
+            })
+            return
+          }
+          console.log(err.message)
+          res.status(400).json({ error: err.message })
+          return
+        }
+        next(err)
+      }
+    )
 
     //* SPA /^\/(?!api).*/  <== Únicamente si no empieza con la palabra api
     this.app.get('/{*splat}', (req, res) => {
